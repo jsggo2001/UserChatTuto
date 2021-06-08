@@ -46,6 +46,12 @@
 		if(session.getAttribute("userID") != null){
 			userID = (String) session.getAttribute("userID");
 		}
+		if(userID != null) {
+			session.setAttribute("massageType", "오류 메시지");
+			session.setAttribute("massageContent", "현재 로그인이 되어 있는 상태입니다.");
+			response.sendRedirect("index.jsp");
+			return;
+		}
 	%>
 	<nav class="navbar navbar-default">
 		<div class ="navbar-header">
@@ -60,7 +66,8 @@
 		</div>
 			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 				<ul class="nav navbar-nav">
-					<li class="active"><a href="index.jsp">메인</a>
+					<li><a href="index.jsp">메인</a>
+					<li><a href="find.jsp">친구찾기</a></li>
 				</ul>
 			<%
 				if(userID == null){
@@ -76,21 +83,10 @@
 							<li><a href="join.jsp">회원가입</a></li>
 					</ul>
 				</li>
-			</ul>						
-			<%
-				}else{
-			%>
-			<ul class="nav navbar-nav navbar-right">
-				<li class="dropdown">
-					<a href="#" class="dropdown-toogle"
-						data-toggle="dropdown" role="buton" aria-haspopup="true"
-						aria-expanded="false">회원관리<span class="caret"></span>
-					</a>
-				</li>
-			</ul>						
+			</ul>
 			<%
 				}
-			%>
+			%>						
 			</div>
 		</nav>
 		<div class="container">

@@ -7,9 +7,23 @@
 		if(session.getAttribute("userID") != null){
 			userID = (String) session.getAttribute("userID");
 		}
+		
 		String toID = null;
 		if(request.getParameter("toID") != null) {
 			toID = (String) request.getParameter("toID");
+		}
+		
+		if(userID == null) {
+			session.setAttribute("massageType", "오류 메시지");
+			session.setAttribute("massageContent", "현재 로그인이 되어 있지 않은 상태입니다.");
+			response.sendRedirect("index.jsp");
+			return;
+		}
+		if(toID == null) {
+			session.setAttribute("massageType", "오류 메시지");
+			session.setAttribute("massageContent", "대화 상대가 지정되지 않았습니다.");
+			response.sendRedirect("index.jsp");
+			return;
 		}
 	%>
 	<meta http-equiv="Content-Type" content="test/html; charset=UTF-8">
@@ -47,7 +61,62 @@
 					}			 
 				 }
 			});
-			$('$chatContent').val('');
+			$('#chatContent').val('');
+		}
+		var lastID = 0;
+		function chatListFunction(type) {
+			var fromID = '<%= userID %>';
+			var toID = '<%= toID %>';
+			$.ajax({
+				type: "POST",
+				url: "./chatListServlet",
+				data: {
+					fromID: encodeURIComponent(fromID),
+					toID: encodeURIComponent(toID),
+					listType: type 
+				},
+				success: function(data) {
+					if(data == "") return;
+					var parsed = JSON.parse(data);
+					var result = parsed.result;
+					for(var i = 0; i < result.length; i++) {
+						if(result[i][0].value == fromID) {
+							result[i][0].value = '나';
+						}
+						addChat(result[i][0].value, result[i][2].value, result[i][3].value);
+					}
+					lastID = Number(parsed.last);
+				}
+			});
+		}
+		function addChat(chatName, chatContent, chatTime){
+			$('#chatList').append('<div class="row">' +
+					'<div class="col-lg-12">' +
+					'<div class="media">' +
+					'<a class="pull-left" href="#">' +
+					'<img class="media-object img-circle" style="width: 30px; height:30px;" src="images/icon.png" alt="">' +
+					'</a>' +
+					'<div class="media-body">' +
+					'<h4 class="media-heading">' +
+					chatName +
+					'<span class="small pull-right">' +
+					chatTime +
+					'</span>' +
+					'</h4>' +
+					'<p>' +
+					chatContent +
+					'</p>' +
+					'</div>' +
+					'</div>' +
+					'</div>' +
+					'</div>' +
+					'<hr>');
+			$('#chatList').scrollTop($('#chatList')[0].scrollHeight);
+		}
+		function getInfiniteChat() {
+			setInterval(function() {
+				chatListFunction(lastID);
+			},3000);
 		}
 	</script>
 </head>
@@ -66,25 +135,11 @@
 		</div>
 			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 				<ul class="nav navbar-nav">
-					<li class="active"><a href="index.jsp">메인</a>
+					<li><a href="index.jsp">메인</a>
+					<li><a href="find.jsp">친구찾기</a></li>
 				</ul>
 			<%
-				if(userID == null){
-			%>
-			<ul class="nav navbar-nav navbar-right">
-				<li class="dropdown">
-					<a href="#" class="dropdown-toogle"
-						data-toggle="dropdown" role="buton" aria-haspopup="true"
-						aria-expanded="false">접속하기<span class="caret"></span>
-					</a>
-					<ul class="dropdown-menu">
-							<li><a href="login.jsp">로그인</a></li>
-							<li><a href="join.jsp">회원가입</a></li>
-					</ul>
-				</li>
-			</ul>						
-			<%
-				}else{
+				if(userID != null) {
 			%>
 			<ul class="nav navbar-nav navbar-right">
 				<li class="dropdown">
@@ -92,6 +147,9 @@
 						data-toggle="dropdown" role="buton" aria-haspopup="true"
 						aria-expanded="false">회원관리<span class="caret"></span>
 					</a>
+					<ul class="dropdown-menu">
+							<li><a href="logoutAction.jsp">로그아웃</a></li>
+					</ul>
 				</li>
 			</ul>						
 			<%
@@ -110,7 +168,7 @@
 							<div class="clearfix"></div>
 						</div>
 						<div id="chat" class="panel-collapse collapse in">
-							<div id="chatlist" class="portlet-body chat-widget" style="overflow-y: auto; width: auto; height: 600px;">	
+							<div id="chatList" class="portlet-body chat-widget" style="overflow-y: auto; width: auto; height: 600px;">	
 							</div>
 							<div class="portlet-footer">
 								<div class="row" style="height: 90px;">
@@ -179,5 +237,11 @@
 			session.removeAttribute("messageType");
 			}
 		%>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				chatListFunction('ten');
+				getInfiniteChat();
+			});
+		</script>
 </body>
 </html>
