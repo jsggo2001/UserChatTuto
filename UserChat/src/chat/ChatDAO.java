@@ -73,7 +73,7 @@ DataSource dataSource;
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		String SQL = "SELECT * FROM CHAT WHERE ((fromID = ? AND toID = ?) or (fromID = ? AND toID =?)) AND chatID > (SELECT MAX(chatID) - ? FROM CHAT) ORDER BY chatTime";
+		String SQL = "SELECT * FROM CHAT WHERE ((fromID = ? AND toID = ?) or (fromID = ? AND toID =?)) AND chatID > (SELECT MAX(chatID) - ? FROM CHAT WHERE (fromID = ? AND toID = ?) OR (fromID = ? AND toID = ?)) ORDER BY chatTime";
 		try {
 			conn = dataSource.getConnection();
 			pstmt = conn.prepareStatement(SQL);
@@ -82,6 +82,10 @@ DataSource dataSource;
 			pstmt.setString(3, toID);
 			pstmt.setString(4, fromID);
 			pstmt.setInt(5, number);
+			pstmt.setString(6, fromID);
+			pstmt.setString(7, toID);
+			pstmt.setString(8, toID);
+			pstmt.setString(9, fromID);
 			rs = pstmt.executeQuery();
 			chatList = new ArrayList<ChatDTO>();
 			while(rs.next()) {
@@ -116,7 +120,7 @@ DataSource dataSource;
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		String SQL = "INSERT INTO CHAT VALUES (NULL, ?, ?, ?, NOW())";
+		String SQL = "INSERT INTO CHAT VALUES (NULL, ?, ?, ?, NOW(), 0)";
 		try {
 			conn = dataSource.getConnection();
 			pstmt = conn.prepareStatement(SQL);
@@ -136,6 +140,57 @@ DataSource dataSource;
 			}
 		}
 		return -1; //데이터베이스 오류
+	}
+	public int readChat(String fromID, String toID) {
+		Connection conn = null; 
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String SQL = "UPDATE CHAT SET chatRead = 1 WHERE (fromID = ? AND toID = ?)";
+		try {
+			conn = dataSource.getConnection();
+			pstmt = conn.prepareStatement(SQL);
+			pstmt.setString(1, toID);
+			pstmt.setString(2, fromID);
+			return pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs != null) rs.close();
+				if(pstmt != null) pstmt.close();
+				if(conn != null) conn.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return -1;
+	}
+	public int getAllUnreadChat(String userID) {
+		Connection conn = null; 
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String SQL = "SELECT COUNT(chatID) FROM CHAT WHERE toID = ? AND chatRead = 0";
+		try {
+			conn = dataSource.getConnection();
+			pstmt = conn.prepareStatement(SQL);
+			pstmt.setString(1, userID);
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				return rs.getInt("COUNT(chatID)");
+			}
+			return 0;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs != null) rs.close();
+				if(pstmt != null) pstmt.close();
+				if(conn != null) conn.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return -1;
 	}
 	
 }
