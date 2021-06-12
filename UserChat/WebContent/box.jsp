@@ -68,16 +68,19 @@
 						} else {
 							result[i][1].value = result[i][0].value;
 						}
-						addBox(result[i][0].value, result[i][1].value, result[i][2].value, result[i][3].value);
+						addBox(result[i][0].value, result[i][1].value, result[i][2].value, result[i][3].value, result[i][4].value, result[i][5].value);
 					}
 				}
 			});
 		}
-		function addBox(lastID, toID, chatContent, chatTime) {
+		function addBox(lastID, toID, chatContent, chatTime, unread, profile) {
 			$('#boxTable').append('<tr onclick="location.href=\'chat.jsp?toID=' + encodeURIComponent(toID) + '\'">' +
-					'<td style="width: 150px;"><h5>' + lastID + '</h5></td>' +
+					'<td style="width: 150px;">' + 
+					'<img class="media-object img-circle" style="margin: 0 auto; max-width: 40px; max-height: 40px" src="' + profile + '">' +
+					'<h5>' + lastID + '</h5></td>' +
 					'<td>' +
-					'<h5>' + chatContent + '</h5>' +
+					'<h5>' + chatContent + 
+					'<span class="label label-info">' + unread + '</span></h5>' +
 					'<div class="pull-right">' + chatTime + '</div>' +
 					'</td>' + 
 					'</tr>');
@@ -132,6 +135,8 @@
 						aria-expanded="false">회원관리<span class="caret"></span>
 					</a>
 					<ul class="dropdown-menu">
+							<li><a href="update.jsp">회원정보수정</a></li>
+							<li><a href="profileUpdate.jsp">프로필수정</a></li>
 							<li><a href="logoutAction.jsp">로그아웃</a></li>
 					</ul>
 				</li>
