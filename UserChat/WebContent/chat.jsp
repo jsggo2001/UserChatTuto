@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import = "java.net.*" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -22,6 +23,12 @@
 		if(toID == null) {
 			session.setAttribute("massageType", "오류 메시지");
 			session.setAttribute("massageContent", "대화 상대가 지정되지 않았습니다.");
+			response.sendRedirect("index.jsp");
+			return;
+		}
+		if(userID.equals(URLDecoder.decode(toID, "UTF-8"))) {
+			session.setAttribute("massageType", "오류 메시지");
+			session.setAttribute("massageContent", "자기 자신에게는 쪽지를 보낼 수 없습니다.");
 			response.sendRedirect("index.jsp");
 			return;
 		}
@@ -118,6 +125,32 @@
 				chatListFunction(lastID);
 			},3000);
 		}
+		
+		function getUnread() {
+			$.ajax({
+				type: "POST",
+				url: "./chatUnread",
+				data: {
+					userID: encodeURIComponent('<%= userID %>'),
+				},
+				success: function(result) {
+					if(result >= 1) {
+						showUnread(result);
+					} else {
+						showUnread('');
+					}				
+				}
+			});
+		}
+		function getInfiniteUnread() {
+			setInterval(function() {
+				getUnread();
+			}, 4000);
+		}
+		function showUnread(result) {
+			$('#unread').html(result);
+		}
+		
 	</script>
 </head>
 <body>
@@ -137,6 +170,7 @@
 				<ul class="nav navbar-nav">
 					<li><a href="index.jsp">메인</a>
 					<li><a href="find.jsp">친구찾기</a></li>
+					<li><a href="box.jsp">메세지함<span id="unread" class="label label-info"></span></a></li>
 				</ul>
 			<%
 				if(userID != null) {
@@ -239,8 +273,10 @@
 		%>
 		<script type="text/javascript">
 			$(document).ready(function() {
-				chatListFunction('ten');
+				getUnread();
+				chatListFunction('0');
 				getInfiniteChat();
+				getInfiniteUnread();
 			});
 		</script>
 </body>

@@ -131,20 +131,22 @@
 		<script>
 			$('#messageModal').modal("show");
 		</script>
+		
+		<%
+			session.removeAttribute("messageContent");
+			session.removeAttribute("messageType");
+			}
+		%>
 		<%
 			if(userID != null) {
 		%>
 			<script type="text/javascript">
 				$(document).ready(function () {
+					getUnread();
 					getInfiniteUnread();
 				});
 			</script>		
 		<%
-			}
-		%>
-		<%
-			session.removeAttribute("messageContent");
-			session.removeAttribute("messageType");
 			}
 		%>
 </body>
