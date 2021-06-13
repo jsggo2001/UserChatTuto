@@ -15,6 +15,16 @@
 			return;
 		}
 		UserDTO user = new UserDAO().getUser(userID);
+		String boardID = null;
+		if (request.getParameter("boardID") != null) {
+			boardID = (String) request.getParameter("boardID");
+		}
+		if(boardID == null || boardID.equals("")) {
+			session.setAttribute("messageType", "오류 메시지");
+			session.setAttribute("messageContent", "게시물을 선택해주세요.");
+			response.sendRedirect("index.jsp");
+			return;
+		}
 	%>
 <head>
 	<meta http-equiv="Content-Type" content="test/html; charset=UTF-8">
@@ -97,26 +107,35 @@
 		</nav>
 		
 		<div class="container">
-			<form method="post" action="./userProfile" enctype="multipart/form-data">
+			<form method="post" action="./boardReply" enctype="multipart/form-data">
 				<table class="table table-bordered table-hover" style="text-align: center; border: 1px solid #dddddd">
 					<thead>
 						<tr>
-							<th colspan="2"><h4>프로필 사진 수정 양식</h4></th>
+							<th colspan="2"><h4>답변 작성 양식</h4></th>
 						</tr>
 					</thead>
 					<tbody>	
 						<tr>
 							<td style="width: 110px;"><h5>아이디</h5></td>
 							<td><h5><%= user.getUserID() %></h5>
-							<input type="hidden" name="userID" value=<%= user.getUserID() %>></td>
+							<input type="hidden" name="userID" value=<%= user.getUserID() %>>
+							<input type="hidden" name="boardID" value=<%= boardID %>></td>
 						</tr>
 						<tr>
-							<td style="width: 110px;"><h5>사진업로드</h5></td>
+							<td style="width: 110px;"><h5>글 제목</h5></td>
+							<td><input class="form-control" type="text" maxlength="50" name="boardTitle" placeholder="글 제목을 입력하세요."></td>
+						</tr>
+						<tr>
+							<td style="width: 110px;"><h5>글 내용</h5></td>
+							<td><textarea class="form-control" rows="10" name="boardContent" maxlength="2048" placeholder="글 내용을 입력하세요."></textarea></td>
+						</tr>
+						<tr>
+							<td style="width: 110px;"><h5>파일 업로드</h5></td>
 							<td colspan="2">
-								<input type="file" name="userProfile" class ="file">
+								<input type="file" name="boardFile" class ="file">
 								<div class="input-group col-xs-12">
 									<span class="input-group-addon"><i class="glyphicon glyphicon-picture"></i></span>
-									<input type="text" class="form-control input-lg" disable placeholder="이미지를 업로드하세요.">
+									<input type="text" class="form-control input-lg" disabled placeholder="파일을 업로드하세요.">
 									<span class="input-group-btn">
 										<button class="browse btn btn-primary input-lg" type="button"><i class="glyphicon glyphicon-search">파일찾기</i></button>
 									</span>

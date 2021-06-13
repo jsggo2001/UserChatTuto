@@ -35,8 +35,8 @@ public class UserUpdateServlet extends HttpServlet {
 			return;
 		}
 		if(!userID.equals((String) session.getAttribute("userID"))) {
-			session.setAttribute("massageType", "오류 메시지");
-			session.setAttribute("massageContent", "접근할 수 없습니다.");
+			session.setAttribute("messageType", "오류 메시지");
+			session.setAttribute("messageContent", "접근할 수 없습니다.");
 			response.sendRedirect("index.jsp");
 			return;
 		}

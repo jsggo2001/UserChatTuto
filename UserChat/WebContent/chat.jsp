@@ -15,20 +15,20 @@
 			toID = (String) request.getParameter("toID");
 		}
 		if(userID == null) {
-			session.setAttribute("massageType", "오류 메시지");
-			session.setAttribute("massageContent", "현재 로그인이 되어 있지 않은 상태입니다.");
+			session.setAttribute("messageType", "오류 메시지");
+			session.setAttribute("messageContent", "현재 로그인이 되어 있지 않은 상태입니다.");
 			response.sendRedirect("index.jsp");
 			return;
 		}
 		if(toID == null) {
-			session.setAttribute("massageType", "오류 메시지");
-			session.setAttribute("massageContent", "대화 상대가 지정되지 않았습니다.");
+			session.setAttribute("messageType", "오류 메시지");
+			session.setAttribute("messageContent", "대화 상대가 지정되지 않았습니다.");
 			response.sendRedirect("index.jsp");
 			return;
 		}
 		if(userID.equals(URLDecoder.decode(toID, "UTF-8"))) {
-			session.setAttribute("massageType", "오류 메시지");
-			session.setAttribute("massageContent", "자기 자신에게는 쪽지를 보낼 수 없습니다.");
+			session.setAttribute("messageType", "오류 메시지");
+			session.setAttribute("messageContent", "자기 자신에게는 쪽지를 보낼 수 없습니다.");
 			response.sendRedirect("index.jsp");
 			return;
 		}
@@ -86,7 +86,7 @@
 				},
 				success: function(data) {
 					if(data == "") return;
-					var parsed = JSON.parse(data);
+					var parsed = JSON.parse(data.replaceAll("&nbr","<br>"));
 					var result = parsed.result;
 					for(var i = 0; i < result.length; i++) {
 						if(result[i][0].value == fromID) {
@@ -197,6 +197,7 @@
 					<li><a href="index.jsp">메인</a>
 					<li><a href="find.jsp">친구찾기</a></li>
 					<li><a href="box.jsp">메세지함<span id="unread" class="label label-info"></span></a></li>
+					<li><a href="boardView.jsp">자유게시판</a></li>
 				</ul>
 			<%
 				if(userID != null) {

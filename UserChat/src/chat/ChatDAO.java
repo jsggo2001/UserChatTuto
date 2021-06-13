@@ -42,9 +42,9 @@ DataSource dataSource;
 			while(rs.next()) {
 				ChatDTO chat = new ChatDTO();
 				chat.setChatID(rs.getInt("chatID"));
-				chat.setFromID(rs.getString("fromID").replaceAll(" ","&nbsp;").replaceAll("<","&lt").replaceAll(">","&gt;").replaceAll("/n","<br>;"));
-				chat.setToID(rs.getString("toID").replaceAll(" ","&nbsp;").replaceAll("<","&lt").replaceAll(">","&gt;").replaceAll("/n","<br>;"));
-				chat.setChatContent(rs.getString("chatContent").replaceAll(" ","&nbsp;").replaceAll("<","&lt").replaceAll(">","&gt;").replaceAll("/n","<br>;"));
+				chat.setFromID(rs.getString("fromID").replaceAll(" ","&nbsp;").replaceAll("<","&lt").replaceAll(">","&gt").replaceAll("/n","<br>"));
+				chat.setToID(rs.getString("toID").replaceAll(" ","&nbsp;").replaceAll("<","&lt").replaceAll(">","&gt").replaceAll("/n","<br>"));
+				chat.setChatContent(rs.getString("chatContent").replaceAll(" ","&nbsp;").replaceAll("<","&lt").replaceAll(">","&gt"));
 				int chatTime = Integer.parseInt(rs.getString("chatTime").substring(11, 13));
 				String timeType = "오전";
 				if(chatTime >= 12) {
@@ -84,9 +84,9 @@ DataSource dataSource;
 			while(rs.next()) {
 				ChatDTO chat = new ChatDTO();
 				chat.setChatID(rs.getInt("chatID"));
-				chat.setFromID(rs.getString("fromID").replaceAll(" ","&nbsp;").replaceAll("<","&lt").replaceAll(">","&gt;").replaceAll("/n","<br>;"));
-				chat.setToID(rs.getString("toID").replaceAll(" ","&nbsp;").replaceAll("<","&lt").replaceAll(">","&gt;").replaceAll("/n","<br>;"));
-				chat.setChatContent(rs.getString("chatContent").replaceAll(" ","&nbsp;").replaceAll("<","&lt").replaceAll(">","&gt;").replaceAll("/n","<br>;"));
+				chat.setFromID(rs.getString("fromID").replaceAll(" ","&nbsp;").replaceAll("<","&lt").replaceAll(">","&gt").replaceAll("/n","<br>"));
+				chat.setToID(rs.getString("toID").replaceAll(" ","&nbsp;").replaceAll("<","&lt").replaceAll(">","&gt").replaceAll("/n","<br>"));
+				chat.setChatContent(rs.getString("chatContent").replaceAll(" ","&nbsp;").replaceAll("<","&lt").replaceAll(">","&gt"));
 				int chatTime = Integer.parseInt(rs.getString("chatTime").substring(11, 13));
 				String timeType = "오전";
 				if(chatTime >= 12) {
@@ -148,9 +148,9 @@ DataSource dataSource;
 			while(rs.next()) {
 				ChatDTO chat = new ChatDTO();
 				chat.setChatID(rs.getInt("chatID"));
-				chat.setFromID(rs.getString("fromID").replaceAll(" ","&nbsp;").replaceAll("<","&lt").replaceAll(">","&gt;").replaceAll("/n","<br>;"));
-				chat.setToID(rs.getString("toID").replaceAll(" ","&nbsp;").replaceAll("<","&lt").replaceAll(">","&gt;").replaceAll("/n","<br>;"));
-				chat.setChatContent(rs.getString("chatContent").replaceAll(" ","&nbsp;").replaceAll("<","&lt").replaceAll(">","&gt;").replaceAll("/n","<br>;"));
+				chat.setFromID(rs.getString("fromID").replaceAll(" ","&nbsp;").replaceAll("<","&lt").replaceAll(">","&gt").replaceAll("/n","<br>"));
+				chat.setToID(rs.getString("toID").replaceAll(" ","&nbsp;").replaceAll("<","&lt").replaceAll(">","&gt").replaceAll("/n","<br>"));
+				chat.setChatContent(rs.getString("chatContent").replaceAll(" ","&nbsp;").replaceAll("<","&lt").replaceAll(">","&gt"));
 				int chatTime = Integer.parseInt(rs.getString("chatTime").substring(11, 13));
 				String timeType = "오전";
 				if(chatTime >= 12) {
@@ -183,7 +183,7 @@ DataSource dataSource;
 			pstmt = conn.prepareStatement(SQL);
 			pstmt.setString(1, fromID);
 			pstmt.setString(2, toID);
-			pstmt.setString(3, chatContent);
+			pstmt.setString(3, chatContent.replaceAll("\n", "&nbr"));
 			return pstmt.executeUpdate();
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -9,8 +9,8 @@
 			userID = (String) session.getAttribute("userID");
 		}
 		if(userID == null) {
-			session.setAttribute("massageType", "오류 메시지");
-			session.setAttribute("massageContent", "현재 로그인이 되어 있지 않은 상태입니다.");
+			session.setAttribute("messageType", "오류 메시지");
+			session.setAttribute("messageContent", "현재 로그인이 되어 있지 않은 상태입니다.");
 			response.sendRedirect("index.jsp");
 			return;
 		}
@@ -78,6 +78,7 @@
 					<li><a href="index.jsp">메인</a>
 					<li><a href="find.jsp">친구찾기</a></li>
 					<li><a href="box.jsp">메세지함<span id="unread" class="label label-info"></span></a></li>
+					<li><a href="boardView.jsp">자유게시판</a></li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
 					<li class="dropdown">

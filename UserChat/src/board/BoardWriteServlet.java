@@ -1,4 +1,4 @@
-package user;
+package board;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,8 +13,7 @@ import javax.servlet.http.HttpSession;
 import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 
-@WebServlet("/UserProfileServlet")
-public class UserProfileServlet extends HttpServlet {
+public class BoardWriteServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -28,7 +27,7 @@ public class UserProfileServlet extends HttpServlet {
 		} catch (Exception e) {
 			request.getSession().setAttribute("messageType", "오류 메시지");
 			request.getSession().setAttribute("messageContent", "파일 크기는 10mb를 넘을수 없습니다.");
-			response.sendRedirect("profileUpdate.jsp");
+			response.sendRedirect("index.jsp");
 			return;
 		}
 		String userID = multi.getParameter("userID");
@@ -39,31 +38,26 @@ public class UserProfileServlet extends HttpServlet {
 			response.sendRedirect("index.jsp");
 			return;
 		}
-		String fileName = "";
-		File file = multi.getFile("userProfile");
-		if(file != null) {
-			String ext = file.getName().substring(file.getName().lastIndexOf(".") + 1);
-			if(ext.equals("jpg") || ext.equals("png") || ext.equals("gif")) {
-				String prev = new UserDAO().getUser(userID).getUserProfile();
-				File prevFile = new File(savePath + "/" + prev);
-				if(prevFile.exists()) {
-					prevFile.delete();
-				}
-				fileName = file.getName();
-			} else {
-				if(file.exists()) {
-					file.delete();
-				}
-				request.getSession().setAttribute("messageType", "오류 메시지");
-				request.getSession().setAttribute("messageContent", "이미지 파일만 업로드 가능합니다.");
-				response.sendRedirect("profileUpdate.jsp");
-				return;
-			}
+		String boardTitle = multi.getParameter("boardTitle");
+		String boardContent = multi.getParameter("boardContent");
+		if(boardTitle == null || boardTitle.equals("") || boardContent == null || boardContent.equals("")) {
+			session.setAttribute("messageType", "오류 메시지");
+			session.setAttribute("messageContent", "내용을 모두 채워주세요.");
+			response.sendRedirect("boardWrite.jsp");
+			return;
 		}
-		new UserDAO().profile(userID, fileName);
+		String boardFile = "";
+		String boardRealFile = "";
+		File file = multi.getFile("boardFile");
+		if(file != null) {
+			boardFile = multi.getOriginalFileName("boardFile");
+			boardRealFile = file.getName();
+		}
+		BoardDAO boardDAO = new BoardDAO();
+		boardDAO.write(userID, boardTitle, boardContent, boardFile, boardRealFile);
 		request.getSession().setAttribute("messageType", "성공 메시지");
-		request.getSession().setAttribute("messageContent", "성공적으로 프로필이 변경되었습니다.");
-		response.sendRedirect("index.jsp");
+		request.getSession().setAttribute("messageContent", "성공적으로 게시물이 작성되었습니다.");
+		response.sendRedirect("boardView.jsp");
 		return;
 	}
 
