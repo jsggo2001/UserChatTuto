@@ -21,13 +21,14 @@ public class BoardReplyServlet extends HttpServlet {
 		response.setContentType("text/html;charset=UTF-8");
 		MultipartRequest multi = null;
 		int fileMaxSize = 10 * 1024 * 1024; 
-		String savePath = request.getRealPath("/upload").replaceAll("\\\\", "/");
+		String savePath = request.getServletContext().getRealPath("/upload").replaceAll("\\\\", "/");
 		try {
 			multi = new MultipartRequest(request, savePath, fileMaxSize, "UTF-8", new DefaultFileRenamePolicy());
 		} catch (Exception e) {
 			request.getSession().setAttribute("messageType", "오류 메시지");
 			request.getSession().setAttribute("messageContent", "파일 크기는 10mb를 넘을수 없습니다.");
 			response.sendRedirect("index.jsp");
+			e.printStackTrace();
 			return;
 		}
 		String userID = multi.getParameter("userID");
